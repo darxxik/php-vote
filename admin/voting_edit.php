@@ -9,14 +9,21 @@ if (isset($_GET["edit_question"]))
 	<input id="new_poll" type="submit" value="Uložit otázku" name="JPW">
 	<a class="btn btn-default btn-lg" href="index.php?voting_edit=' . $_GET["voting_edit"] . '" role="button">Zpět</a>
 	</form>
-
-	<form method="POST">
-	<input class="moznost" type="textfield" name="possibility_new" size="20" placeholder="Možnost">
-	<input id="new_poll" type="submit" value="Přidat možnost" name="JPW">
-	</form>
-
-	<form method="POST">
 	';
+
+	if (sizeof($voting->get_possibilities($_GET["voting_edit"], $_GET["edit_question"])) != 8)
+	{
+		echo '<form method="POST">
+		<input class="moznost" type="textfield" name="possibility_new" size="20" placeholder="Možnost">
+		<input id="new_poll" type="submit" value="Přidat možnost" name="JPW">
+		</form>';
+	}
+	else
+	{
+		echo '<div class="alert alert-warning" role="alert">Byl dosažen maximální počet možností. Pro přidání dalších prosím nějakou odeberte.</div>';
+	}
+
+	echo '<form method="POST">';
 	$i = 1;
 	foreach ($voting->get_possibilities($_GET["voting_edit"], $_GET["edit_question"]) as $possibility)
 	{

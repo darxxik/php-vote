@@ -130,9 +130,9 @@ if (isset($_POST["possibility_new"]))
 // Determine existing edit_possibility
 if (isset($_GET["edit_question"])) // Dont go through if $_GET["edit_question"] isn't defined
 {
-	$count = $voting->possibility_count($_GET["voting_edit"], $_GET["edit_question"]);
+	$count = $voting->get_possibilities($_GET["voting_edit"], $_GET["edit_question"]);
 	$i = 0;
-	while ($i <= $count)
+	while ($i <= sizeof($count))
 	{
 		if (isset($_POST["edit_possibility_" . $i]))
 		{

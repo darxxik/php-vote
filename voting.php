@@ -27,6 +27,21 @@ if (!isset($_SESSION["voting_code"]))
 {
 	$_SESSION["voting_code"] = $_POST["voting_code"];
 }
+
+$p = 0;
+/* foreach ($voting->get_possibilities($_SESSION["voting_code"], 1) as $possibility)
+{
+	$p = $p + 1;
+	echo "Calling $code: " . $_SESSION["voting_code"] . " poss: " . $possibility;
+	$voters = $voting->get_result($_SESSION["voting_code"], 1, $possibility);
+	if (in_array($_SESSION["voting_user"], $voters))
+	{
+		echo '<META HTTP-EQUIV="Refresh" Content="0; URL=index.php?page=voted">';
+	}
+} */
+
+
+
 $more = $voting->get_more($_SESSION["voting_code"]);
 // Check if somebody voted
 if (isset($_GET["vote"]))
