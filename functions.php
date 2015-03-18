@@ -3,8 +3,25 @@
 // Add support for themes
 $theme = "default";
 
-function random_color() {
+/*function random_color() {
 	return sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+}
+*/
+function random_color($array)
+{
+	$array[] = 1;
+    $indexColor = round( 255 / sizeof( $array ) );
+    $iterator = 1;
+
+    $arrayOfRGB = array();
+
+    foreach( $array as $item)
+    {   
+        $arrayOfRGB[] = "rgb(" . round(( $indexColor * $iterator * 0.25 )) . "," . round(( $indexColor * $iterator * 0.5 )) . ", " . round(( $indexColor * $iterator )) . " )";
+        $iterator++;
+    }  
+
+    return $arrayOfRGB;
 }
 
 function jquery($line)
@@ -629,6 +646,71 @@ function create_voting($name)
 	fwrite($file, $write);
 	fclose($file);
 	return $rand;
+}
+
+function duplicate_voting($code)
+{
+	if(!is_numeric($code))
+	{
+		return false;
+	}
+	$rand = date("y") . rand(1000, 9999);
+	if ($this->in_admin == 1)
+	{
+		$source = "../voting/" . $code;
+		$target = "../voting/" . $rand;
+	}
+	else
+	{
+		$source = "voting/" . $code;
+		$target = "voting/" . $rand;
+	}
+	while (file_exists($target))
+	{
+		$rand = rand(1000, 9999);
+		if ($this->in_admin == 1)
+		{
+			$target = "../voting/" . date("y") . $rand;
+		}
+		else
+		{
+			$target = "voting/" . date("y") . $rand;
+		}
+	}
+	mkdir($target);
+    $dir = opendir($source); 
+    while(false !== ( $file = readdir($dir)) ) { 
+        if (( $file != '.' ) && ( $file != '..' )) { 
+            if ( is_dir($source . '/' . $file) ) { 
+                recurse_copy($source . '/' . $file,$target . '/' . $file); 
+            } 
+            else { 
+                copy($source . '/' . $file,$target . '/' . $file); 
+            } 
+        } 
+    } 
+    closedir($dir);
+    // Duplicating done, clean up votings
+    $questions = array_diff(scandir($target), array('..', '.', '.htaccess'));
+    foreach ($questions as $question)
+    {
+    	$file = $target . "/" . $question;
+    	$file_contents = file($file);
+    	$content[] = $file_contents[0];
+    	$i = 0;
+    	foreach ($file_contents as $line)
+    	{
+    		if ($i != 0)
+    		{
+    			$explode = explode("+++", $line);
+    			$content[] = $explode[0] . "\n";
+    		}
+    		$i = $i + 1;
+    	}
+    	unlink($file);
+	    file_put_contents($file, $content);
+	    unset($content);
+    }
 }
 
 function add_question($code, $header, $possibilities, $possibility_right)
