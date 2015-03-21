@@ -6,6 +6,15 @@ if (!isset($_SESSION["welcome"]))
 	$_SESSION["welcome"] = 1;
 }
 
+if ($user->get_cur_username() == "admin")
+{
+	$all = 1;
+}
+else
+{
+	$all = 0;
+}
+
 echo '<h1>Správa hlasování</h1>';
 if ((!isset($_GET["voting_edit"])) AND (!isset($_GET["voting_result"])) AND (!isset($_GET["voting_remove"])) AND (!isset($_GET["voting_lock"])))
 {
@@ -16,16 +25,16 @@ if ((!isset($_GET["voting_edit"])) AND (!isset($_GET["voting_result"])) AND (!is
 	<th class="long">Počet otázek</th>
 	<th class="long">Datum vytvoření</th>
 	<th class="long">Identifikační kód</th>
-	<th class="short">Upravit otázku</th>
+	<th class="short">Upravit hlasování</th>
 	<th class="short">Výsledky</th>
 	<th class="short">Duplikovat</th>
 	<th class="short">Uzamčení</th>
 	<th class="short">Odstranit</th>
 	</tr>';
-	if ($voting->view_votings($user->get_cur_username(), 0)!=0)
+	if ($voting->view_votings($user->get_cur_username(), $all)!=0)
 	{
 	$qid = 0;
-  	foreach ($voting->view_votings($user->get_cur_username(), 0) as $b)
+  	foreach ($voting->view_votings($user->get_cur_username(), $all) as $b)
 	{
 	    $qid = $qid + 1;
 			$more = $voting->get_more($b);
@@ -48,27 +57,31 @@ if ((!isset($_GET["voting_edit"])) AND (!isset($_GET["voting_result"])) AND (!is
 }
 	echo '</table>';
 	$qid = 0;
-	foreach ($voting->view_votings($user->get_cur_username(), 0) as $b)
+	if ($voting->view_votings($user->get_cur_username(), $all) != null)
 	{
-	$qid = $qid + 1;
-echo	'	<!-- Modal -->
-	<div class="modal fade" id="delete' . $qid . '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="myModalLabel">Přejete si opravdu odstranit toto hlasování?</h4>
-				</div>
-				<div class="modal-body">
-				</div>
-				<div class="modal-footer">
-				  <a href="index.php?voting_remove=' . $b . '"><button type="button" class="btn btn-danger" >Ano</button></a>
-					<button type="button" class="btn btn-default" data-dismiss="modal">Ne</button>
+		foreach ($voting->view_votings($user->get_cur_username(), $all) as $b)
+		{
+		$qid = $qid + 1;
+		echo '
+		<!-- Modal -->
+		<div class="modal fade" id="delete' . $qid . '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">Přejete si opravdu odstranit toto hlasování?</h4>
+					</div>
+					<div class="modal-body">
+					</div>
+					<div class="modal-footer">
+					  <a href="index.php?voting_remove=' . $b . '"><button type="button" class="btn btn-danger" >Ano</button></a>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Ne</button>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<!-- Button trigger modal --> ';
+		<!-- Button trigger modal --> ';
+		}
 	}
 ?>
 <div style="height:10px;">
